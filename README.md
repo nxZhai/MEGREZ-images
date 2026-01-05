@@ -9,6 +9,11 @@
 如果您有其他深度学习框架或特殊版本的打包镜像需求,, 请在 [MEGREZ 打包镜像仓库](https://github.com/XShengTech/MEGREZ-images) 中提交 issue
 :::
 
+### CUDA added in 2026-01-05
+| 镜像标签 | CUDA | Python | Ubuntu |
+| --- | ------- | ---- | ------ |
+| cuda-12.6_python-3.12_ubuntu-22.04 | 12.6 | 3.12 | 22.04 |
+
 ### PyTorch
 
 | 镜像标签 | PyTorch | CUDA | Python | Ubuntu |
