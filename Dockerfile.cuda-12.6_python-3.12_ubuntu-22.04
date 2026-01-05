@@ -1,0 +1,55 @@
+FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu22.04
+
+ARG PYTHON_VERSION=3.12.9
+ARG CUDA_VERSION=cu126
+
+ENV LANG=C.UTF-8
+
+# 更新软件源，并安装基本工具和依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    make \
+    wget \
+    curl \
+    openssh-server \
+    sudo \
+    bzip2 \
+    ca-certificates \
+    git \
+    vim \
+    libgl1 libsm6 libxext6 libglib2.0-0 \
+    language-pack-en language-pack-zh* \
+    screen tmux unzip && \
+    apt-get clean && rm -r /var/lib/apt/lists/*
+
+# 设置工作目录为 /root
+WORKDIR /root
+
+# 把主目录设置为 /share
+ENV HOME=/share
+
+SHELL ["/bin/bash", "-c"]
+
+# 配置 SSH 允许 root 登录和密码认证
+RUN sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# 创建 SSH 运行时目录
+RUN mkdir -p /var/run/sshd
+
+RUN apt-get clean || true && \ 
+    rm -r /var/lib/apt/lists/* || true && \
+    conda clean -y --all || true  && \
+    rm -r ~/.cache/pip/* || true && \
+    rm -r ~/.cache/code-server/* || true
+
+# 暴露 Jupyter Notebook 的默认端口 8888 和 SSH 默认端口 22
+EXPOSE 8888 22 3000 8080 80
+
+RUN echo -e 'export PATH="/usr/local/nvidia/bin:/usr/local/cuda/bin:$PATH"\nexport LANG="C.UTF-8"\nexport HOME=/share\nexport SHELL=/bin/bash' >> /root/.bashrc
+
+
+# 修改启动脚本
+RUN sed -i ':a;$!{N;ba}; s|\necho\n|\necho\nulimit -n 64000\nservice ssh start|' /opt/nvidia/nvidia_entrypoint.sh
