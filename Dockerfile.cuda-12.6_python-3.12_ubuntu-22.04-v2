@@ -15,6 +15,7 @@ RUN apt-get update && \
     curl \
     openssh-server \
     sudo \
+    git \
     bzip2 \
     ca-certificates \
     vim \
@@ -30,11 +31,6 @@ WORKDIR /root
 # 把主目录设置为 /share
 ENV HOME=/share
 
-# 安装最新版本的 Git
-RUN sudo apt-get install -y software-properties-common && \
-    sudo add-apt-repository ppa:git-core/ppa && \
-    sudo apt-get update && \
-    sudo apt-get install -y git
 
 
 SHELL ["/bin/bash", "-c"]
